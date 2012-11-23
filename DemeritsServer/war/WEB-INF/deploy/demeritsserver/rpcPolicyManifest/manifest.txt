@@ -1,0 +1,3 @@
+# Module demeritsserver
+# RPC service class, partial path of RPC policy file
+com.jjs.demerits.server.client.GreetingService, 694622C51A629F58DF44602CE4F0F4EE.gwt.rpc
