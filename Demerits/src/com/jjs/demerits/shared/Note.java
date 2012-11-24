@@ -3,7 +3,7 @@ package com.jjs.demerits.shared;
 import java.io.Serializable;
 
 public class Note implements Serializable {
-	private static final long serialVersionUID = 91819760000L;
+	private static final long serialVersionUID = 91819760001L;
 
 	private Long key;
 
@@ -14,6 +14,8 @@ public class Note implements Serializable {
 	private String text;
 
 	private long date;
+	
+	private boolean demerit;
 	
 	public String getFrom() {
 		return from;
@@ -49,5 +51,13 @@ public class Note implements Serializable {
 
 	public Long getKey() {
 		return key;
+	}
+
+	public boolean isDemerit() {
+		return demerit;
+	}
+
+	public void setDemerit(boolean demerit) {
+		this.demerit = demerit;
 	}
 }

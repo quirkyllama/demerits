@@ -22,7 +22,7 @@
 
   <servlet>
     <servlet-name>postNote</servlet-name>
-    <servlet-class>com.jjs.demerits.server.PostEntry</servlet-class>
+    <servlet-class>com.jjs.demerits.server.PostNote</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>postNote</servlet-name>

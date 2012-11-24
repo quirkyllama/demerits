@@ -1,10 +1,6 @@
 package com.jjs.demerits.server;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -15,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.jjs.demerits.shared.DemeritsProto;
+import com.jjs.demerits.shared.DemeritsProto.NoteList.Builder;
 import com.jjs.demerits.shared.Note;
 
 public class GetNotesForUser extends HttpServlet {
@@ -32,18 +30,35 @@ public class GetNotesForUser extends HttpServlet {
 			q = pm.newQuery(Note.class, "to == '" + user + "'");
 			q.setOrdering("date desc");
 			List<Note> notesToUser = (List<Note>) q.execute();
-			List<Note> allNotes = new ArrayList<Note>();
-			allNotes.addAll(pm.detachCopyAll(notesFromUser));
-			allNotes.addAll(pm.detachCopyAll(notesToUser));
+			DemeritsProto.NoteList.Builder noteListBuilder = 
+					DemeritsProto.NoteList.newBuilder();
+			noteListBuilder.setEmail(user);
+			addToList(notesFromUser, noteListBuilder, true);
+			addToList(notesToUser, noteListBuilder, false);
 			
-			System.err.println("Demerit Notes from: " + user + ": " + allNotes.size());
 			ServletOutputStream output = res.getOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(output);
-			oos.writeObject(allNotes);
-			oos.close();
+			noteListBuilder.build().writeTo(output);
+			output.close();
 		}
 		finally {
 			pm.close();
+		}
+	}
+
+	private void addToList(
+			List<Note> notes, Builder noteListBuilder, boolean fromUser) {
+		for (Note note : notes) {
+			DemeritsProto.Note.Builder builder = DemeritsProto.Note.newBuilder();
+			builder.setDate(note.getDate())
+				.setText(note.getText())
+				.setDemerit(note.isDemerit())
+				.setFrom(note.getFrom())
+				.setTo(note.getTo());
+			if (fromUser) {
+				noteListBuilder.addFromUser(builder);
+			} else {
+				noteListBuilder.addToUser(builder);
+			}
 		}
 	}
 }

@@ -1,8 +1,13 @@
 package com.jjs.demerits;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.jjs.demerits.client.DemeritClient;
+import com.jjs.demerits.shared.DemeritsProto;
+import com.jjs.demerits.shared.DemeritsProto.NoteList;
 import com.jjs.demerits.shared.Note;
 
 import android.os.Bundle;
@@ -31,7 +36,7 @@ public class NotesList extends Activity {
 
 					@Override
 					public void run() {
-						final List<Note> notes = client.getNotes();
+						final NoteList notes = client.getNotes();
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -56,7 +61,7 @@ public class NotesList extends Activity {
         return true;
     }
 
-	private void setupMessageList(List<Note> notes) {
+	private void setupMessageList(NoteList notes) {
 		final ListView listView = (ListView) findViewById(R.id.noteList);
 //        ProgressBar progressBar = new ProgressBar(this);
 //        progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -69,14 +74,20 @@ public class NotesList extends Activity {
         updateList(notes);
 	}
     
-	private void updateList(final List<Note> notes) {
-		System.err.println("Updating list: " + notes.size());
+	private void updateList(final NoteList noteList) {
+		System.err.println("Updating list: " + noteList.toString());
 		final ListView listView = (ListView) findViewById(R.id.noteList);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(NotesList.this, R.layout.message_list_view);
-		for (Note note : notes) {
-			System.err.println("Adding list note: " + note.getText());
-			adapter.add(note.getText() + " to: " + note.getTo());
-		}
+		List<DemeritsProto.Note> notes = new ArrayList<DemeritsProto.Note>();
+		notes.addAll(noteList.getFromUserList());
+		notes.addAll(noteList.getToUserList());
+		Collections.sort(notes, new Comparator<DemeritsProto.Note>() {
+			@Override
+			public int compare(DemeritsProto.Note n1,
+					DemeritsProto.Note n2) {
+				return (int) (n1.getDate() - n2.getDate());
+			}
+		});
+		NoteListAdapter adapter = new NoteListAdapter(NotesList.this, notes, client.getEmail());
 		listView.setAdapter(adapter);
 	}
 }

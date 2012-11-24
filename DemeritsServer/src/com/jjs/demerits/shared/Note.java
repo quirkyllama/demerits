@@ -13,7 +13,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 
 @PersistenceCapable
 public class Note implements Serializable {
-	private static final long serialVersionUID = 91819760000L;
+	private static final long serialVersionUID = 91819760001L;
 	
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -32,6 +32,9 @@ public class Note implements Serializable {
 
 	@Persistent
 	private long date;
+	
+	@Persistent
+	private boolean demerit;
 	
 	public String getFrom() {
 		return from;
@@ -67,5 +70,13 @@ public class Note implements Serializable {
 
 	public Long getKey() {
 		return key;
+	}
+
+	public boolean isDemerit() {
+		return demerit;
+	}
+
+	public void setDemerit(boolean demerit) {
+		this.demerit = demerit;
 	}
 }

@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+option java_package = "com.jjs.demerits.shared";
+option java_outer_classname = "DemeritsProto";
+
+message Note {
+	optional string text = 1;
+	optional string from = 2;
+	optional string to = 3;
+	optional int64 date = 4;
+	optional bool demerit = 5;
+}
+
+message NoteList {
+	optional string email = 1;
+	repeated Note fromUser = 2;
+	repeated Note toUser = 3;
+}
