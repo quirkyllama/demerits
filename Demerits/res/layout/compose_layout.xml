@@ -17,11 +17,15 @@
             android:text="To:"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/to_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10" />
+            android:layout_weight="1"
+            android:ems="10"
+            android:selectAllOnFocus="true"
+            android:text="AutoCompleteTextView" />
+
     </LinearLayout>
     
     <LinearLayout

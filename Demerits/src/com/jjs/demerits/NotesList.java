@@ -19,6 +19,8 @@ import com.jjs.demerits.shared.DemeritsProto;
 import com.jjs.demerits.shared.DemeritsProto.NoteList;
 
 public class NotesList extends Activity {
+  public static final String PREF_NAME = "DemeritsPref";
+  
   private DemeritClient client;
   private LoginScreen login;
   private MenuItem composeButton;
@@ -33,7 +35,7 @@ public class NotesList extends Activity {
     login.init(new LoginScreen.Callback() {
       @Override
       public void gotCredentials() {
-        updateNoteList();
+        updateNoteList(false);
       }
     });
   }
@@ -92,14 +94,20 @@ public class NotesList extends Activity {
     super.onResume();
     if (paused) {
       paused = false;
-      updateNoteList();      
+      updateNoteList(true);      
     }
   }
 
-  private void updateNoteList() {
+  private void updateNoteList(final boolean delay) {
     new Thread(new Runnable() {
       @Override
       public void run() {
+        if (delay) {
+          try {
+            Thread.sleep(2000);
+          } catch (InterruptedException e) {
+          }
+        }
         final NoteList notes = client.getNotes();
         runOnUiThread(new Runnable() {
           @Override

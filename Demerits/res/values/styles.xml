@@ -16,4 +16,6 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+    <color name="DemeritColor">#FF3030</color>
+    <color name="KudoColor">#108010</color>
 </resources>

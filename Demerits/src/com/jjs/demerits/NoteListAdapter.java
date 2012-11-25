@@ -47,7 +47,8 @@ public class NoteListAdapter extends ArrayAdapter<DemeritsProto.Note> {
 		}
 		TextView text = (TextView) row.findViewById(R.id.note_text);
 		text.setText(note.getText());
-		
+		text.setTextColor(parent.getResources().getColor(
+		    note.getDemerit() ? R.color.DemeritColor : R.color.KudoColor));
 		final TextView date = (TextView) row.findViewById(R.id.note_date);
 		String dateString;
 		long agoMinutes = 
@@ -58,11 +59,10 @@ public class NoteListAdapter extends ArrayAdapter<DemeritsProto.Note> {
 			}
 			if (agoMinutes < 3) {
 			  AlphaAnimation animation = new AlphaAnimation(1, 0.25f);
-			  animation.setRepeatCount(5);
-			  animation.setDuration(800);
+			  animation.setRepeatCount(3);
+			  animation.setDuration(900);
 			  animation.setRepeatMode(AlphaAnimation.REVERSE);
-			  date.startAnimation(animation);
-			  from.startAnimation(animation);
+			  row.startAnimation(animation);
 			}
 			dateString = String.format("%d minute%s ago", agoMinutes, agoMinutes > 1 ? "s" : "");
 		} else if (agoMinutes / 60 < 16) {
