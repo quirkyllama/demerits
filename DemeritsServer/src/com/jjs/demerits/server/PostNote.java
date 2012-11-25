@@ -26,6 +26,7 @@ public class PostNote extends HttpServlet {
 			newNote.setTo(note.getTo());
 			newNote.setText(note.getText());
 			newNote.setDate(note.getDate());
+			newNote.setDemerit(note.getDemerit());
 			pm.makePersistent(newNote);
 		}
 		finally {
