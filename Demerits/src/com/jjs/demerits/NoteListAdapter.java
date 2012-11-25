@@ -7,13 +7,13 @@ import java.util.List;
 
 import com.jjs.demerits.shared.DemeritsProto;
 import com.jjs.demerits.shared.DemeritsProto.NoteList;
-import com.jjs.demerits.shared.Note;
 
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -33,8 +33,7 @@ public class NoteListAdapter extends ArrayAdapter<DemeritsProto.Note> {
 	
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
-		System.err.println("Updateing row: " + position);
-		if(row == null) {
+		if (row == null) {
 			LayoutInflater inflater = ((Activity)context).getLayoutInflater();
 			row = inflater.inflate(R.layout.message_in_list, parent, false);
 		}
@@ -49,13 +48,21 @@ public class NoteListAdapter extends ArrayAdapter<DemeritsProto.Note> {
 		TextView text = (TextView) row.findViewById(R.id.note_text);
 		text.setText(note.getText());
 		
-		TextView date = (TextView) row.findViewById(R.id.note_date);
+		final TextView date = (TextView) row.findViewById(R.id.note_date);
 		String dateString;
 		long agoMinutes = 
 				(System.currentTimeMillis() - note.getDate()) / (60 * 1000);
 		if (agoMinutes < 90) {
-			if (agoMinutes == 0) { 
-				agoMinutes = 1;
+			if (agoMinutes == 0) {
+		      agoMinutes = 1;
+			}
+			if (agoMinutes < 3) {
+			  AlphaAnimation animation = new AlphaAnimation(1, 0.25f);
+			  animation.setRepeatCount(5);
+			  animation.setDuration(800);
+			  animation.setRepeatMode(AlphaAnimation.REVERSE);
+			  date.startAnimation(animation);
+			  from.startAnimation(animation);
 			}
 			dateString = String.format("%d minute%s ago", agoMinutes, agoMinutes > 1 ? "s" : "");
 		} else if (agoMinutes / 60 < 16) {

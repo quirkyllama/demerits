@@ -11,6 +11,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -29,7 +30,7 @@ public class LoginScreen {
   private static final String SAVED_PASSWORD = "password";
   public static final int ACCOUNT_DIALOG = 0;
 
-  private final NotesList activity;
+  private final Activity activity;
   private final DemeritClient client;
   
   private List<String> emails;  
@@ -38,32 +39,32 @@ public class LoginScreen {
   private boolean authenticated = false;
   private Callback callback;
   
-  public LoginScreen(NotesList activity, DemeritClient client) {
-	  this.activity = activity;
-	  this.client = client;
+  public LoginScreen(Activity activity, DemeritClient client) {
+    this.activity = activity;
+    this.client = client;
   }
 
   public interface Callback {
-	  public void gotCredentials();
+    public void gotCredentials();
   }
 
   public void init(Callback callback) {
-	  this.callback = callback;
-	  readCredentials();
-	  if (authenticated) {
-		  System.err.println("Authenticated!");
-		  callback.gotCredentials();
-		  return;
-	  }
+    this.callback = callback;
+    readCredentials();
+    if (authenticated) {
+      System.err.println("Authenticated!");
+      callback.gotCredentials();
+      return;
+    }
 
-	  showLoginScreen();
-	  System.err.println("Get email: " + email);
+    showLoginScreen();
+    System.err.println("Get email: " + email);
 
-	  if (email == null) {
-		  getEmailFromAccount();
-	  } else {
-		  updateEmail(email);
-	  }
+    if (email == null) {
+      getEmailFromAccount();
+    } else {
+      updateEmail(email);
+    }
   }
 
   private EditText getPasswordForm() {
@@ -75,39 +76,39 @@ public class LoginScreen {
   }
 
   private void showLoginScreen() {
-	  
+
     activity.setContentView(R.layout.login_screen);
     activity.findViewById(R.id.loginProgress).
-      setVisibility(View.INVISIBLE);
+    setVisibility(View.INVISIBLE);
 
     TextView.OnEditorActionListener onPasswordActionListener = new TextView.OnEditorActionListener() {
       @Override
       public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-    	  String email = "" + getEmailForm().getText();
-    	  System.err.println("X New email: " + email);
-    	  if (!email.isEmpty()) {
-    		  LoginScreen.this.email = email;
-    	  }
-    	  String password = "" + getPasswordForm().getText();
-    	  if (!password.isEmpty()) {
-    		  LoginScreen.this.password = password;
-    		  login();
-    	  }
-    	  return false;
+        String email = "" + getEmailForm().getText();
+        System.err.println("X New email: " + email);
+        if (!email.isEmpty()) {
+          LoginScreen.this.email = email;
+        }
+        String password = "" + getPasswordForm().getText();
+        if (!password.isEmpty()) {
+          LoginScreen.this.password = password;
+          login();
+        }
+        return false;
       }      
     };
     TextView.OnEditorActionListener onEmailActionListener = new TextView.OnEditorActionListener() {
-    	@Override
-    	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-    		String email = "" + getEmailForm().getText();
-    		if (!email.isEmpty()) {
-    			LoginScreen.this.email = email;
-    			if (password != null) {
-    				login();
-    			}
-    		}
-    		return false;
-    	}      
+      @Override
+      public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        String email = "" + getEmailForm().getText();
+        if (!email.isEmpty()) {
+          LoginScreen.this.email = email;
+          if (password != null) {
+            login();
+          }
+        }
+        return false;
+      }      
     };   
     getEmailForm().setOnEditorActionListener(onEmailActionListener);
     getPasswordForm().setOnEditorActionListener(onPasswordActionListener);
@@ -115,19 +116,19 @@ public class LoginScreen {
 
   private void login() {
     activity.findViewById(R.id.loginProgress).
-      setVisibility(View.VISIBLE);
+    setVisibility(View.VISIBLE);
     client.setCredentials(email, password);
     callback.gotCredentials();
   }
-  
+
   public boolean isShowing() {
     return !authenticated;
   }
 
   private void readCredentials() {
     SharedPreferences preferences = 
-        activity.getBaseContext().getSharedPreferences(
-            PREF_NAME, Activity.MODE_PRIVATE);
+            activity.getBaseContext().getSharedPreferences(
+                    PREF_NAME, Activity.MODE_PRIVATE);
     email = preferences.getString(SAVED_EMAIL, null);
     System.err.println("Email from saved bundle: " + email);
     if (email != null) {
@@ -138,7 +139,7 @@ public class LoginScreen {
       }
     }
   }
-  
+
   private void getEmailFromAccount() {
     System.err.println("Get email from account");
     Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
@@ -146,16 +147,16 @@ public class LoginScreen {
     emails = new ArrayList<String>();
     for (int i = 0; i < accounts.length; i++) {
       if (emailPattern.matcher(accounts[i].name).matches() &&
-          !emails.contains(accounts[i].name)) {
+              !emails.contains(accounts[i].name)) {
         emails.add(accounts[i].name);
       }
     }
     emails.add("Other");
     activity.showDialog(ACCOUNT_DIALOG);
   }
-  
+
   public Dialog createAccountDialog() {
-  if (emails == null) {
+    if (emails == null) {
       System.err.println("Emails are null!");
       return null;
     }
@@ -163,7 +164,7 @@ public class LoginScreen {
     System.err.println("Setting up PW");
     dialog.setTitle("Pick Email Account");
     dialog.setItems(emails.toArray(new String[emails.size()]),
-        new DialogInterface.OnClickListener() {
+            new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         if (which == emails.size() - 1) {
@@ -174,17 +175,17 @@ public class LoginScreen {
         dialog.dismiss();
       }
     });
-    
+
     return dialog.create();
   }
-  
+
   public void onPause() {
     if (email != null && email.length() > 0) {
       SharedPreferences.Editor preferences = 
-          activity.getBaseContext().getSharedPreferences(
-              PREF_NAME, Activity.MODE_PRIVATE).edit();
+              activity.getBaseContext().getSharedPreferences(
+                      PREF_NAME, Activity.MODE_PRIVATE).edit();
       preferences.putString(SAVED_EMAIL,  email);
-  
+
       System.err.println("Save state: " + email);
       preferences.putString(SAVED_PASSWORD, password);
       preferences.commit();
@@ -201,14 +202,11 @@ public class LoginScreen {
         view.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN , 0, 0, 0));
         view.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP , 0, 0, 0));
       }
-  }, 100);
-//    InputMethodManager imm = (InputMethodManager)
-//       activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-//    imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
+    }, 100);
   }
 
   public void loginFailed() {
-	  showLoginScreen();
-	  Toast.makeText(activity, "Login Failed", Toast.LENGTH_SHORT).show();
+    showLoginScreen();
+    Toast.makeText(activity, "Login Failed", Toast.LENGTH_SHORT).show();
   }
 }

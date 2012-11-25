@@ -1,5 +1,6 @@
 package com.jjs.demerits.client;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URI;
@@ -13,12 +14,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.jjs.demerits.shared.DemeritsProto;
+import com.jjs.demerits.shared.DemeritsProto.Note;
 import com.jjs.demerits.shared.DemeritsProto.NoteList;
-import com.jjs.demerits.shared.Note;
 
 import android.app.Activity;
 
@@ -33,10 +35,6 @@ public class DemeritClient {
 	public DemeritClient(Activity activity) {
 		this.activity = activity;
 		client = new DefaultHttpClient();
-	}
-	
-	public void sendNote(String note, String to) {
-		
 	}
 	
 	public NoteList getNotes() {
@@ -73,4 +71,28 @@ public class DemeritClient {
 	public String getEmail() {
 		return email;
 	}
+
+  public boolean sendNote(Note note) {
+    HttpPost post = new HttpPost();
+    post.setURI(URI.create(String.format("%s/postNote", HOST)));
+    try {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        note.writeTo(baos);
+        post.setEntity(new ByteArrayEntity(baos.toByteArray()));
+        HttpResponse response;
+        response = client.execute(post);
+        if (response.getStatusLine().getStatusCode() != 200) {
+          System.err.println("Error: " + response.getStatusLine().getStatusCode() );
+          return false;
+        }
+        return true;
+    } catch (ClientProtocolException e) {
+        System.err.println("Error in http X request: " + e.getMessage());
+        e.printStackTrace();
+    } catch (IOException e) {
+        System.err.println("Error in http request: " + e.getMessage());
+        e.printStackTrace();
+    }
+    return false;
+  }
 }
