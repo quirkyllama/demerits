@@ -16,3 +16,9 @@ message NoteList {
 	repeated Note fromUser = 2;
 	repeated Note toUser = 3;
 }
+
+message UpdateGcmId {
+	optional string email = 1;
+	optional string gcmId = 2;
+	optional bool register = 3;
+}

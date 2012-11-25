@@ -1,19 +1,13 @@
 package com.jjs.demerits.shared;
 
-import java.io.Serializable;
-
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Index;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
-
 @PersistenceCapable
-public class Note implements Serializable {
-	private static final long serialVersionUID = 91819760001L;
+public class Note {
 	
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)

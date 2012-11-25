@@ -1606,6 +1606,532 @@ public final class DemeritsProto {
     // @@protoc_insertion_point(class_scope:NoteList)
   }
   
+  public interface UpdateGcmIdOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+    
+    // optional string email = 1;
+    boolean hasEmail();
+    String getEmail();
+    
+    // optional string gcmId = 2;
+    boolean hasGcmId();
+    String getGcmId();
+    
+    // optional bool register = 3;
+    boolean hasRegister();
+    boolean getRegister();
+  }
+  public static final class UpdateGcmId extends
+      com.google.protobuf.GeneratedMessage
+      implements UpdateGcmIdOrBuilder {
+    // Use UpdateGcmId.newBuilder() to construct.
+    private UpdateGcmId(Builder builder) {
+      super(builder);
+    }
+    private UpdateGcmId(boolean noInit) {}
+    
+    private static final UpdateGcmId defaultInstance;
+    public static UpdateGcmId getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public UpdateGcmId getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.jjs.demerits.shared.DemeritsProto.internal_static_UpdateGcmId_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.jjs.demerits.shared.DemeritsProto.internal_static_UpdateGcmId_fieldAccessorTable;
+    }
+    
+    private int bitField0_;
+    // optional string email = 1;
+    public static final int EMAIL_FIELD_NUMBER = 1;
+    private java.lang.Object email_;
+    public boolean hasEmail() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public String getEmail() {
+      java.lang.Object ref = email_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          email_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getEmailBytes() {
+      java.lang.Object ref = email_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        email_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    // optional string gcmId = 2;
+    public static final int GCMID_FIELD_NUMBER = 2;
+    private java.lang.Object gcmId_;
+    public boolean hasGcmId() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public String getGcmId() {
+      java.lang.Object ref = gcmId_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          gcmId_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getGcmIdBytes() {
+      java.lang.Object ref = gcmId_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        gcmId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    // optional bool register = 3;
+    public static final int REGISTER_FIELD_NUMBER = 3;
+    private boolean register_;
+    public boolean hasRegister() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public boolean getRegister() {
+      return register_;
+    }
+    
+    private void initFields() {
+      email_ = "";
+      gcmId_ = "";
+      register_ = false;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getEmailBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(2, getGcmIdBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBool(3, register_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getEmailBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, getGcmIdBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(3, register_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.jjs.demerits.shared.DemeritsProto.UpdateGcmId parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.jjs.demerits.shared.DemeritsProto.UpdateGcmId prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.jjs.demerits.shared.DemeritsProto.UpdateGcmIdOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.jjs.demerits.shared.DemeritsProto.internal_static_UpdateGcmId_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.jjs.demerits.shared.DemeritsProto.internal_static_UpdateGcmId_fieldAccessorTable;
+      }
+      
+      // Construct using com.jjs.demerits.shared.DemeritsProto.UpdateGcmId.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private Builder(BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        email_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        gcmId_ = "";
+        bitField0_ = (bitField0_ & ~0x00000002);
+        register_ = false;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.jjs.demerits.shared.DemeritsProto.UpdateGcmId.getDescriptor();
+      }
+      
+      public com.jjs.demerits.shared.DemeritsProto.UpdateGcmId getDefaultInstanceForType() {
+        return com.jjs.demerits.shared.DemeritsProto.UpdateGcmId.getDefaultInstance();
+      }
+      
+      public com.jjs.demerits.shared.DemeritsProto.UpdateGcmId build() {
+        com.jjs.demerits.shared.DemeritsProto.UpdateGcmId result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private com.jjs.demerits.shared.DemeritsProto.UpdateGcmId buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        com.jjs.demerits.shared.DemeritsProto.UpdateGcmId result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public com.jjs.demerits.shared.DemeritsProto.UpdateGcmId buildPartial() {
+        com.jjs.demerits.shared.DemeritsProto.UpdateGcmId result = new com.jjs.demerits.shared.DemeritsProto.UpdateGcmId(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.email_ = email_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.gcmId_ = gcmId_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.register_ = register_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.jjs.demerits.shared.DemeritsProto.UpdateGcmId) {
+          return mergeFrom((com.jjs.demerits.shared.DemeritsProto.UpdateGcmId)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(com.jjs.demerits.shared.DemeritsProto.UpdateGcmId other) {
+        if (other == com.jjs.demerits.shared.DemeritsProto.UpdateGcmId.getDefaultInstance()) return this;
+        if (other.hasEmail()) {
+          setEmail(other.getEmail());
+        }
+        if (other.hasGcmId()) {
+          setGcmId(other.getGcmId());
+        }
+        if (other.hasRegister()) {
+          setRegister(other.getRegister());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              onChanged();
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              email_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              bitField0_ |= 0x00000002;
+              gcmId_ = input.readBytes();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              register_ = input.readBool();
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // optional string email = 1;
+      private java.lang.Object email_ = "";
+      public boolean hasEmail() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public String getEmail() {
+        java.lang.Object ref = email_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          email_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setEmail(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        email_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearEmail() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        email_ = getDefaultInstance().getEmail();
+        onChanged();
+        return this;
+      }
+      void setEmail(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000001;
+        email_ = value;
+        onChanged();
+      }
+      
+      // optional string gcmId = 2;
+      private java.lang.Object gcmId_ = "";
+      public boolean hasGcmId() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public String getGcmId() {
+        java.lang.Object ref = gcmId_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          gcmId_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setGcmId(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        gcmId_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearGcmId() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        gcmId_ = getDefaultInstance().getGcmId();
+        onChanged();
+        return this;
+      }
+      void setGcmId(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000002;
+        gcmId_ = value;
+        onChanged();
+      }
+      
+      // optional bool register = 3;
+      private boolean register_ ;
+      public boolean hasRegister() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public boolean getRegister() {
+        return register_;
+      }
+      public Builder setRegister(boolean value) {
+        bitField0_ |= 0x00000004;
+        register_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearRegister() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        register_ = false;
+        onChanged();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:UpdateGcmId)
+    }
+    
+    static {
+      defaultInstance = new UpdateGcmId(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:UpdateGcmId)
+  }
+  
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_Note_descriptor;
   private static
@@ -1616,6 +2142,11 @@ public final class DemeritsProto {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_NoteList_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_UpdateGcmId_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_UpdateGcmId_fieldAccessorTable;
   
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1629,8 +2160,10 @@ public final class DemeritsProto {
       "\n\004Note\022\014\n\004text\030\001 \001(\t\022\014\n\004from\030\002 \001(\t\022\n\n\002to" +
       "\030\003 \001(\t\022\014\n\004date\030\004 \001(\003\022\017\n\007demerit\030\005 \001(\010\"I\n" +
       "\010NoteList\022\r\n\005email\030\001 \001(\t\022\027\n\010fromUser\030\002 \003" +
-      "(\0132\005.Note\022\025\n\006toUser\030\003 \003(\0132\005.NoteB(\n\027com." +
-      "jjs.demerits.sharedB\rDemeritsProto"
+      "(\0132\005.Note\022\025\n\006toUser\030\003 \003(\0132\005.Note\"=\n\013Upda" +
+      "teGcmId\022\r\n\005email\030\001 \001(\t\022\r\n\005gcmId\030\002 \001(\t\022\020\n" +
+      "\010register\030\003 \001(\010B(\n\027com.jjs.demerits.shar" +
+      "edB\rDemeritsProto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1653,6 +2186,14 @@ public final class DemeritsProto {
               new java.lang.String[] { "Email", "FromUser", "ToUser", },
               com.jjs.demerits.shared.DemeritsProto.NoteList.class,
               com.jjs.demerits.shared.DemeritsProto.NoteList.Builder.class);
+          internal_static_UpdateGcmId_descriptor =
+            getDescriptor().getMessageTypes().get(2);
+          internal_static_UpdateGcmId_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_UpdateGcmId_descriptor,
+              new java.lang.String[] { "Email", "GcmId", "Register", },
+              com.jjs.demerits.shared.DemeritsProto.UpdateGcmId.class,
+              com.jjs.demerits.shared.DemeritsProto.UpdateGcmId.Builder.class);
           return null;
         }
       };

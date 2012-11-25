@@ -36,4 +36,15 @@
   <servlet-mapping>
     <servlet-name>getNotes</servlet-name>
     <url-pattern>/getNotes</url-pattern>
-  </servlet-mapping></web-app>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>updateGcmId</servlet-name>
+    <servlet-class>com.jjs.demerits.server.UpdateGcmId</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>updateGcmId</servlet-name>
+    <url-pattern>/updateGcmId</url-pattern>
+  </servlet-mapping>
+  
+  </web-app>

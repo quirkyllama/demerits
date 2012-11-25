@@ -26,7 +26,7 @@ public class GetNotesForUser extends HttpServlet {
 			Query q = pm.newQuery(Note.class, "from == '" + user + "'");
 			q.setOrdering("date desc");
 			List<Note> notesFromUser = (List<Note>) q.execute();
-
+			
 			q = pm.newQuery(Note.class, "to == '" + user + "'");
 			q.setOrdering("date desc");
 			List<Note> notesToUser = (List<Note>) q.execute();
