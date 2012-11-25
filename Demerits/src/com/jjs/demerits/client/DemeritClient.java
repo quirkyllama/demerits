@@ -2,6 +2,7 @@ package com.jjs.demerits.client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -17,27 +18,25 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import com.jjs.demerits.shared.DemeritsProto;
 import com.jjs.demerits.shared.DemeritsProto.Note;
 import com.jjs.demerits.shared.DemeritsProto.NoteList;
 
-import android.app.Activity;
-
 public class DemeritClient {
 	private final String HOST = 
 			"http://demeritsx.appspot.com";
 	private final HttpClient client;
-	private final Activity activity;
 	private String email;
 	private String password;
 	
-	public DemeritClient(Activity activity) {
-		this.activity = activity;
+	public DemeritClient() {
 		client = new DefaultHttpClient();
 	}
 	
-	public NoteList getNotes() {
+	public synchronized NoteList getNotes() {
+	    System.err.println("Get Notes");
 		HttpPost post = new HttpPost();
 		post.setURI(URI.create(String.format("%s/getNotes", HOST)));
 		List<NameValuePair> nameValuePairs = 
@@ -52,7 +51,10 @@ public class DemeritClient {
 			HttpResponse response;
 			response = client.execute(post);
 			HttpEntity resEntity = response.getEntity();
-			builder.mergeFrom(resEntity.getContent());
+            builder.mergeFrom(resEntity.getContent());
+            resEntity.consumeContent();
+            System.err.println("Get Notes- content consumed");
+
 		} catch (ClientProtocolException e) {
 			System.err.println("Error in http X request: " + e.getMessage());
 			e.printStackTrace();
@@ -72,7 +74,8 @@ public class DemeritClient {
 		return email;
 	}
 
-  public boolean sendNote(Note note) {
+  public synchronized boolean sendNote(Note note) {
+    System.err.println("Sending note");
     HttpPost post = new HttpPost();
     post.setURI(URI.create(String.format("%s/postNote", HOST)));
     try {
@@ -81,6 +84,38 @@ public class DemeritClient {
         post.setEntity(new ByteArrayEntity(baos.toByteArray()));
         HttpResponse response;
         response = client.execute(post);
+        response.getEntity().consumeContent();
+        if (response.getStatusLine().getStatusCode() != 200) {
+          System.err.println("Error: " + response.getStatusLine().getStatusCode() );
+          return false;
+        }
+        return true;
+    } catch (ClientProtocolException e) {
+        System.err.println("Error in http X request: " + e.getMessage());
+        e.printStackTrace();
+    } catch (IOException e) {
+        System.err.println("Error in http request: " + e.getMessage());
+        e.printStackTrace();
+    }
+    return false;
+  }
+  
+  public synchronized boolean updateGcmId(String gcmId, boolean register) {
+    System.err.println("Updating GCM: " + register + " gcmId: " + gcmId);
+    DemeritsProto.UpdateGcmId update = DemeritsProto.UpdateGcmId.newBuilder()
+        .setEmail(email)
+        .setGcmId(gcmId)
+        .setRegister(register)
+        .build();
+    HttpPost post = new HttpPost();
+    post.setURI(URI.create(String.format("%s/updateGcmId", HOST)));
+    try {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        update.writeTo(baos);
+        post.setEntity(new ByteArrayEntity(baos.toByteArray()));
+        HttpResponse response;
+        response = client.execute(post);
+        response.getEntity().consumeContent();
         if (response.getStatusLine().getStatusCode() != 200) {
           System.err.println("Error: " + response.getStatusLine().getStatusCode() );
           return false;

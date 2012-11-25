@@ -125,6 +125,13 @@ public class LoginScreen {
     return !authenticated;
   }
 
+  public static String getEmail(Context context) {
+    SharedPreferences preferences = 
+        context.getSharedPreferences(
+                PREF_NAME, Activity.MODE_PRIVATE);
+    return preferences.getString(SAVED_EMAIL, null);
+  }
+  
   private void readCredentials() {
     SharedPreferences preferences = 
             activity.getBaseContext().getSharedPreferences(

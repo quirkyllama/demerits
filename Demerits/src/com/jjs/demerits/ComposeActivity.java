@@ -31,7 +31,7 @@ public class ComposeActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    client = new DemeritClient(this);
+    client = new DemeritClient();
     login = new LoginScreen(this, client);
     login.init(new LoginScreen.Callback() {
       @Override

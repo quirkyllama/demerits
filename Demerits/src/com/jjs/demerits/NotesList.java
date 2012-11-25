@@ -8,18 +8,22 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.google.android.gcm.GCMRegistrar;
 import com.jjs.demerits.client.DemeritClient;
 import com.jjs.demerits.shared.DemeritsProto;
 import com.jjs.demerits.shared.DemeritsProto.NoteList;
 
 public class NotesList extends Activity {
   public static final String PREF_NAME = "DemeritsPref";
+
+  private static final String GCM_SENDER_ID = "691074005527";
   
   private DemeritClient client;
   private LoginScreen login;
@@ -30,12 +34,31 @@ public class NotesList extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    client = new DemeritClient(this);
+    GCMRegistrar.checkDevice(this);
+    GCMRegistrar.checkManifest(this);
+    String regId = GCMRegistrar.getRegistrationId(this);
+    if (regId.equals("")) {
+      GCMRegistrar.register(this, GCM_SENDER_ID);
+    } else {
+      System.err.println("Already registered");
+    }
+    client = new DemeritClient();
     login = new LoginScreen(this, client);
     login.init(new LoginScreen.Callback() {
       @Override
       public void gotCredentials() {
         updateNoteList(false);
+        new Thread(new Runnable() {
+          @Override
+          public void run() {
+            String regId = GCMRegistrar.getRegistrationId(NotesList.this);
+            if (regId.isEmpty()) {
+              System.err.println("Not registered yet!");
+            } else {
+              client.updateGcmId(regId, true);
+            }
+          }          
+        }).start();
       }
     });
   }
