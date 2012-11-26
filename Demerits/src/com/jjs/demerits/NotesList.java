@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,7 +41,7 @@ public class NotesList extends Activity {
     if (regId.equals("")) {
       GCMRegistrar.register(this, GCM_SENDER_ID);
     } else {
-      System.err.println("Already registered");
+      System.err.println("Already registered: " + regId);
     }
     client = new DemeritClient();
     login = new LoginScreen(this, client);
@@ -82,6 +83,15 @@ public class NotesList extends Activity {
     return true;
   }
 
+  @Override
+  @Deprecated
+  protected Dialog onCreateDialog(int id, Bundle bundle) {
+    if (id == LoginScreen.ACCOUNT_DIALOG) {
+      return login.createAccountDialog();
+    }
+    return null;
+  }
+  
   private void setupMessageList(NoteList notes) {
     final ListView listView = (ListView) findViewById(R.id.noteList);
     ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
