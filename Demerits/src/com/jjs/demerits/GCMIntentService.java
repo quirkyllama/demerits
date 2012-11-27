@@ -11,14 +11,11 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gcm.GCMBaseIntentService;
-import com.jjs.demerits.client.DemeritClient;
 import com.jjs.demerits.shared.Base64;
 import com.jjs.demerits.shared.DemeritsProto;
-import com.jjs.demerits.shared.DemeritsProto.NoteList;
 
 public class GCMIntentService extends GCMBaseIntentService {
   private static final String DEMERIT_NOTE_IN_BUNDLE = "demerit.note";
-  private final DemeritClient client = new DemeritClient();
   
   public GCMIntentService() {
     super();
@@ -30,14 +27,11 @@ public class GCMIntentService extends GCMBaseIntentService {
   }
 
   @Override
-  protected void onError(Context arg0, String arg1) {
-    // TODO Auto-generated method stub
-
+  protected void onError(Context context, String error) {
   }
 
   @Override
   protected void onMessage(Context context, Intent intent) {
-
     Bundle extras = intent.getExtras();
     String encodedNote = extras.getString(DEMERIT_NOTE_IN_BUNDLE);
     System.err.println("Got Message from GCM: " + 
@@ -56,7 +50,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             shortEmail + " sent you a Kudo!";
       String content = note.getDemerit() ?
           String.format("From: %s\n '%s'", shortEmail, note.getText()) : note.getText();
-      Intent listIntent = new Intent(this, NoteList.class);
+      Intent listIntent = new Intent(this, NotesList.class);
       listIntent.putExtra(DEMERIT_NOTE_IN_BUNDLE, encodedNote);
       PendingIntent pendingIntent = 
           PendingIntent.getActivity(this, 0, listIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -66,6 +60,7 @@ public class GCMIntentService extends GCMBaseIntentService {
               R.drawable.new_kudo_notification)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
+        .setTicker(title)
         .setContentTitle(title)
         .setContentText(content).build();
       NotificationManager mNotificationManager =

@@ -20,6 +20,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.jjs.demerits.shared.DemeritsProto;
 import com.jjs.demerits.shared.DemeritsProto.Note;
 import com.jjs.demerits.shared.DemeritsProto.NoteList;
@@ -28,15 +32,29 @@ public class DemeritClient {
 	private final String HOST = 
 			"http://demeritsx.appspot.com";
 	private final HttpClient client;
+	private final Context context;
 	private String email;
 	private String password;
 	
-	public DemeritClient() {
-		client = new DefaultHttpClient();
+	
+	public DemeritClient(Context context) {
+	  client = new DefaultHttpClient();
+	  this.context = context;
+	}
+	
+	public boolean isNetworkAvailable() {
+	  ConnectivityManager cm = 
+	      (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	  NetworkInfo info = cm.getActiveNetworkInfo();
+	  if (info == null) {
+	    return false;
+	  }
+	  return info.isAvailable();
 	}
 	
 	public synchronized NoteList getNotes() {
 	    System.err.println("Get Notes");
+	    
 		HttpPost post = new HttpPost();
 		post.setURI(URI.create(String.format("%s/getNotes", HOST)));
 		List<NameValuePair> nameValuePairs = 

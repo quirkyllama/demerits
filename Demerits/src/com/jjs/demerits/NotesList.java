@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.jjs.demerits.client.DemeritClient;
@@ -43,7 +44,7 @@ public class NotesList extends Activity {
     } else {
       System.err.println("Already registered: " + regId);
     }
-    client = new DemeritClient();
+    client = new DemeritClient(this);
     login = new LoginScreen(this, client);
     login.init(new LoginScreen.Callback() {
       @Override
@@ -132,6 +133,10 @@ public class NotesList extends Activity {
   }
 
   private void updateNoteList(final boolean delay) {
+    if (!client.isNetworkAvailable()) {
+      Toast.makeText(this, "Sorry, network not available",Toast.LENGTH_SHORT).show();
+      return;
+    }
     new Thread(new Runnable() {
       @Override
       public void run() {

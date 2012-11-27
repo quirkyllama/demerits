@@ -24,7 +24,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:selectAllOnFocus="true"
-            android:text="AutoCompleteTextView" />
+            android:text="" />
 
     </LinearLayout>
     
@@ -53,11 +53,20 @@
         android:id="@+id/demerit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.06"
+        android:layout_weight="0.02"
         android:ems="10"
-        android:inputType="textMultiLine" >
-
+        android:inputType="textMultiLine"
+        android:gravity="top"
+        android:background="@drawable/full_border"
+        android:layout_margin="4dp"
+        android:lines="2" >
         <requestFocus />
     </EditText>
+
+    <Button
+        android:id="@+id/send_new_button"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:text="Send" />
 
 </LinearLayout>
