@@ -12,13 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.android.gcm.server.Message;
-import com.google.android.gcm.server.MulticastResult;
-import com.google.android.gcm.server.Result;
-import com.google.android.gcm.server.Sender;
 import com.jjs.demerits.shared.DemeritsProto;
 import com.jjs.demerits.shared.GcmRegistration;
-import com.jjs.demerits.shared.Note;
 
 public class UpdateGcmId extends HttpServlet {
 	public static final String API_KEY = "AIzaSyA8pJoPVU8b-wQNYAnwzrNOFrDlDbpZTLk";
@@ -29,9 +24,6 @@ public class UpdateGcmId extends HttpServlet {
 		DemeritsProto.UpdateGcmId update = 
 				DemeritsProto.UpdateGcmId.parseFrom(req.getInputStream());
 		System.err.println("Update: " + update);
-//		Sender sender = new Sender(API_KEY);
-//		Message message = new Message.Builder().build();
-//		Result result = sender.send(message, update.getGcmId(), 5);
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {

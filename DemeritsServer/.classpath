@@ -18,5 +18,6 @@
 	<classpathentry kind="lib" path="/Applications/eclipse/adt-bundle-mac/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.5.0.v201211121240-rel-r42/gwt-2.5.0/validation-api-1.0.0.GA.jar" sourcepath="/Applications/eclipse/adt-bundle-mac/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.5.0.v201211121240-rel-r42/gwt-2.5.0/validation-api-1.0.0.GA-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/protobuf.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gcm-server.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
