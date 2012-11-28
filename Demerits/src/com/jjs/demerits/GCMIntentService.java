@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.jjs.demerits.shared.Base64;
+import com.jjs.demerits.shared.DemeritUtils;
 import com.jjs.demerits.shared.DemeritsProto;
 
 public class GCMIntentService extends GCMBaseIntentService {
@@ -41,10 +42,7 @@ public class GCMIntentService extends GCMBaseIntentService {
       rawNote = Base64.decode(encodedNote);
       DemeritsProto.Note note = 
           DemeritsProto.Note.parseFrom(rawNote);
-      String shortEmail = note.getFrom();
-      if (shortEmail.indexOf('@') > 0) {
-        shortEmail = shortEmail.substring(0, shortEmail.indexOf('@'));
-      }
+      String shortEmail = DemeritUtils.getShortEmail(note.getFrom());
       String title = note.getDemerit() ?
           "You've got Demerits!" :
             shortEmail + " sent you a Kudo!";

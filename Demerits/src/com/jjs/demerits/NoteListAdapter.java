@@ -57,7 +57,7 @@ public class NoteListAdapter extends ArrayAdapter<DemeritsProto.Note> {
 			if (agoMinutes == 0) {
 		      agoMinutes = 1;
 			}
-			if (agoMinutes < 3) {
+			if (agoMinutes < 3 && position == 0) {
 			  AlphaAnimation animation = new AlphaAnimation(1, 0.25f);
 			  animation.setRepeatCount(3);
 			  animation.setDuration(900);

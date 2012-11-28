@@ -3,42 +3,57 @@ package com.jjs.demerits;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.jjs.demerits.client.DemeritClient;
+import com.jjs.demerits.shared.DemeritUtils;
 import com.jjs.demerits.shared.DemeritsProto;
+import com.jjs.demerits.shared.DemeritsProto.Note;
 import com.jjs.demerits.shared.DemeritsProto.NoteList;
 
 public class NotesList extends Activity {
   public static final String PREF_NAME = "DemeritsPref";
-
   private static final String GCM_SENDER_ID = "691074005527";
-  
+  private static final String RECENT = "Most Recent";  
+  private static final String OLDEST = "Oldest First";
+
+  private String filter;
   private DemeritClient client;
   private LoginScreen login;
   private MenuItem composeButton;
   private boolean paused = false;
   private boolean loggedIn = false;
-  
+  private NoteList notes;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     GCMRegistrar.checkDevice(this);
     GCMRegistrar.checkManifest(this);
     String regId = GCMRegistrar.getRegistrationId(this);
+    filter = RECENT;
     if (regId.equals("")) {
       GCMRegistrar.register(this, GCM_SENDER_ID);
     } else {
@@ -93,26 +108,39 @@ public class NotesList extends Activity {
     return null;
   }
   
-  private void setupMessageList(NoteList notes) {
+  private void setupMessageList() {
     final ListView listView = (ListView) findViewById(R.id.noteList);
     ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-    updateList(notes);
+    updateList();
   }
 
-  private void updateList(final NoteList noteList) {
-    //System.err.println("Updating list: " + noteList.toString());
+  private void updateList() {
     final ListView listView = (ListView) findViewById(R.id.noteList);
-    List<DemeritsProto.Note> notes = new ArrayList<DemeritsProto.Note>();
-    notes.addAll(noteList.getFromUserList());
-    notes.addAll(noteList.getToUserList());
-    Collections.sort(notes, new Comparator<DemeritsProto.Note>() {
+    List<DemeritsProto.Note> noteList = new ArrayList<DemeritsProto.Note>();
+    final boolean recentFirst = !filter.equals(OLDEST);
+    noteList.addAll(notes.getFromUserList());
+    noteList.addAll(notes.getToUserList());
+    if (!filter.equals(OLDEST) && !filter.equals(RECENT)) {
+      System.err.println("Filtering: " + filter);
+      List<DemeritsProto.Note> filteredList = new ArrayList<DemeritsProto.Note>();
+      for (Note note : noteList) {
+        if (note.getFrom().startsWith(filter) ||
+            note.getTo().startsWith(filter)) {
+          filteredList.add(note);
+        }
+      }
+      noteList = filteredList;
+    }
+    
+    Collections.sort(noteList, new Comparator<DemeritsProto.Note>() {
       @Override
       public int compare(DemeritsProto.Note n1,
               DemeritsProto.Note n2) {
-        return (int) (n2.getDate() - n1.getDate());
+        int val = (int) (n2.getDate() - n1.getDate());
+        return recentFirst ? val : -val;
       }
     });
-    NoteListAdapter adapter = new NoteListAdapter(NotesList.this, notes, client.getEmail());
+    NoteListAdapter adapter = new NoteListAdapter(NotesList.this, noteList, client.getEmail());
     listView.setAdapter(adapter);
   }
 
@@ -146,7 +174,7 @@ public class NotesList extends Activity {
           } catch (InterruptedException e) {
           }
         }
-        final NoteList notes = client.getNotes();
+        notes = client.getNotes();
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
@@ -158,11 +186,54 @@ public class NotesList extends Activity {
                 composeButton.setEnabled(true);
               }
               setContentView(R.layout.note_list);
-              setupMessageList(notes);
+              Button filterButton = (Button) findViewById(R.id.list_filter);
+              filterButton.setText("Filter By: " + filter);
+              filterButton.setOnClickListener(new OnClickListener() {            
+                @Override
+                public void onClick(View v) {
+                  AlertDialog.Builder builder = new AlertDialog.Builder(NotesList.this);
+                  final List<String> filterList = getFilterList(notes);
+                  builder.setItems(filterList.toArray(new String[filterList.size()]), 
+                      new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                      updateFilter(filterList.get(item));
+                      dialog.cancel();
+                    }
+                  });
+                  builder.create().show();
+                }
+              });
+              setupMessageList();
             }
           }
         });
       }					
     }).start();
+  }
+
+  private void updateFilter(String filter) {
+    if (this.filter.equals(filter)) {
+      return;
+    }
+    this.filter = filter;
+    Button filterButton = (Button) findViewById(R.id.list_filter);
+    filterButton.setText("Filter By: " + filter);
+    setupMessageList();
+  }                    
+
+  private List<String> getFilterList(NoteList notes) {
+    SortedSet<String> emails = new TreeSet<String>();
+    List<String> list = new ArrayList<String>();
+    list.add(RECENT);
+    list.add(OLDEST);
+    for (Note note : notes.getToUserList()) {
+      emails.add(DemeritUtils.getShortEmail(note.getFrom()));
+    }
+    for (Note note : notes.getFromUserList()) {
+      emails.add(DemeritUtils.getShortEmail(note.getTo()));
+    }
+    list.addAll(emails);
+    return list;
   }
 }
