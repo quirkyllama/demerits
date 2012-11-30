@@ -3,9 +3,7 @@ package com.jjs.demerits;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -13,15 +11,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -33,11 +29,13 @@ import com.jjs.demerits.shared.DemeritsProto;
 import com.jjs.demerits.shared.DemeritsProto.Note;
 import com.jjs.demerits.shared.DemeritsProto.NoteList;
 
-public class NotesList extends Activity {
+public class DemeritActivity extends Activity {
   public static final String PREF_NAME = "DemeritsPref";
   private static final String GCM_SENDER_ID = "691074005527";
   private static final String RECENT = "Most Recent";  
   private static final String OLDEST = "Oldest First";
+  private static final String SAVED_MODE = "SavedMode";
+  private static final String LAST_FILTER = "LastFilter";
 
   private String filter;
   private DemeritClient client;
@@ -46,14 +44,31 @@ public class NotesList extends Activity {
   private boolean paused = false;
   private boolean loggedIn = false;
   private NoteList notes;
-
+  private DisplayMode mode = null;
+  private enum DisplayMode {
+    LIST, COMPOSE
+  }
+  private ComposeScreen composeScreen;
+  
+  public DemeritActivity() {
+    super();
+  }
+  
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    System.err.println("OnCreate");
+    SharedPreferences preferences = 
+        getBaseContext().getSharedPreferences(
+            DemeritActivity.PREF_NAME, Activity.MODE_PRIVATE);
+    String modeString =
+        preferences.getString(SAVED_MODE, DisplayMode.LIST.toString());
+    filter = preferences.getString(LAST_FILTER, RECENT);
+    final DisplayMode nextMode = DisplayMode.valueOf(modeString);
+
     GCMRegistrar.checkDevice(this);
     GCMRegistrar.checkManifest(this);
     String regId = GCMRegistrar.getRegistrationId(this);
-    filter = RECENT;
     if (regId.equals("")) {
       GCMRegistrar.register(this, GCM_SENDER_ID);
     } else {
@@ -61,14 +76,19 @@ public class NotesList extends Activity {
     }
     client = new DemeritClient(this);
     login = new LoginScreen(this, client);
+    composeScreen = new ComposeScreen(this, client, login);
     login.init(new LoginScreen.Callback() {
       @Override
       public void gotCredentials() {
-        updateNoteList(false);
+        if (nextMode == DisplayMode.LIST) {
+          switchToNoteList(false);
+        } else {
+          goToComposeScreen();
+        }
         new Thread(new Runnable() {
           @Override
           public void run() {
-            String regId = GCMRegistrar.getRegistrationId(NotesList.this);
+            String regId = GCMRegistrar.getRegistrationId(DemeritActivity.this);
             if (regId.isEmpty()) {
               System.err.println("Not registered yet!");
             } else {
@@ -81,21 +101,35 @@ public class NotesList extends Activity {
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
+  public void onBackPressed() {
+    if (mode == DisplayMode.COMPOSE) {
+      switchToNoteList(false);
+    } else {
+      super.onBackPressed();
+    }
+  }
+
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    System.err.println("OnPrepareOptionMenus!!!!!");
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.activity_note_list, menu);
     composeButton = menu.findItem(R.id.menu_compose);
     composeButton.setOnMenuItemClickListener(
-            new OnMenuItemClickListener() {					
-              @Override
-              public boolean onMenuItemClick(MenuItem item) {
-                System.err.println("Got click");
-                Intent intent = new Intent(NotesList.this, ComposeActivity.class);
-                startActivity(intent);      
-                return true;
-              }
-            });
-    composeButton.setEnabled(loggedIn);
+        new OnMenuItemClickListener() {					
+          @Override
+          public boolean onMenuItemClick(MenuItem item) {
+            System.err.println("Got click");
+            goToComposeScreen();
+            return true;
+          }
+        });
+    
+    boolean enabled = mode == DisplayMode.LIST;
+    System.err.println("Enabled: " + enabled + " " + mode);
+    composeButton.setVisible(enabled);
+    composeButton.setEnabled(enabled);
+    composeScreen.onCreateOptionsMenu(menu, mode == DisplayMode.COMPOSE);
     return true;
   }
 
@@ -108,12 +142,6 @@ public class NotesList extends Activity {
     return null;
   }
   
-  private void setupMessageList() {
-    final ListView listView = (ListView) findViewById(R.id.noteList);
-    ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-    updateList();
-  }
-
   private void updateList() {
     final ListView listView = (ListView) findViewById(R.id.noteList);
     List<DemeritsProto.Note> noteList = new ArrayList<DemeritsProto.Note>();
@@ -140,27 +168,59 @@ public class NotesList extends Activity {
         return recentFirst ? val : -val;
       }
     });
-    NoteListAdapter adapter = new NoteListAdapter(NotesList.this, noteList, client.getEmail());
+    NoteListAdapter adapter = new NoteListAdapter(DemeritActivity.this, noteList, client.getEmail());
     listView.setAdapter(adapter);
   }
 
   @Override
   protected void onPause() {
     super.onPause();
+    System.err.println("OnPause");
     login.onPause();
+    composeScreen.onPause();
+    
+    SharedPreferences.Editor preferences = 
+        getBaseContext().getSharedPreferences(
+            DemeritActivity.PREF_NAME, Activity.MODE_PRIVATE).edit();
+    preferences.putString(SAVED_MODE,  mode.toString());    
+    preferences.commit();
     paused = true;
   }
   
   @Override
   protected void onResume() {
     super.onResume();
+    System.err.println("OnResume");
     if (paused) {
       paused = false;
-      updateNoteList(true);      
     }
   }
 
-  private void updateNoteList(final boolean delay) {
+  public void switchToNoteList(final boolean delay) {
+    if (mode != DisplayMode.LIST) {
+      mode = DisplayMode.LIST;
+      setContentView(R.layout.note_list);
+      invalidateOptionsMenu();
+      Button filterButton = (Button) findViewById(R.id.list_filter);
+      filterButton.setText("Filter By: " + filter);
+      filterButton.setOnClickListener(new OnClickListener() {            
+        @Override
+        public void onClick(View v) {
+          AlertDialog.Builder builder = new AlertDialog.Builder(DemeritActivity.this);
+          final List<String> filterList = getFilterList(notes);
+          builder.setItems(filterList.toArray(new String[filterList.size()]), 
+              new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+              updateFilter(filterList.get(item));
+              dialog.cancel();
+            }
+          });
+          builder.create().show();
+        }
+      });
+    }
+    
     if (!client.isNetworkAvailable()) {
       Toast.makeText(this, "Sorry, network not available",Toast.LENGTH_SHORT).show();
       return;
@@ -185,26 +245,8 @@ public class NotesList extends Activity {
               if (composeButton != null) {
                 composeButton.setEnabled(true);
               }
-              setContentView(R.layout.note_list);
-              Button filterButton = (Button) findViewById(R.id.list_filter);
-              filterButton.setText("Filter By: " + filter);
-              filterButton.setOnClickListener(new OnClickListener() {            
-                @Override
-                public void onClick(View v) {
-                  AlertDialog.Builder builder = new AlertDialog.Builder(NotesList.this);
-                  final List<String> filterList = getFilterList(notes);
-                  builder.setItems(filterList.toArray(new String[filterList.size()]), 
-                      new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                      updateFilter(filterList.get(item));
-                      dialog.cancel();
-                    }
-                  });
-                  builder.create().show();
-                }
-              });
-              setupMessageList();
+//              setContentView(R.layout.note_list);
+              updateList();
             }
           }
         });
@@ -219,7 +261,7 @@ public class NotesList extends Activity {
     this.filter = filter;
     Button filterButton = (Button) findViewById(R.id.list_filter);
     filterButton.setText("Filter By: " + filter);
-    setupMessageList();
+    updateList();
   }                    
 
   private List<String> getFilterList(NoteList notes) {
@@ -235,5 +277,11 @@ public class NotesList extends Activity {
     }
     list.addAll(emails);
     return list;
+  }
+
+  private void goToComposeScreen() {
+    composeScreen.show();
+    mode = DisplayMode.COMPOSE;
+    invalidateOptionsMenu();
   }
 }

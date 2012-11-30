@@ -1,10 +1,8 @@
 package com.jjs.demerits.server;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 
-import javax.jdo.JDONullIdentityException;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;

@@ -8,6 +8,7 @@ import com.jjs.demerits.shared.DemeritsProto.Note;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -24,24 +25,23 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class ComposeActivity extends Activity {
+public class ComposeScreen {
   private static final String LAST_TO_EMAIL = "last_to_email";
   
-  private DemeritClient client;
-  private LoginScreen login;
+  private final DemeritClient client;
+  private final LoginScreen login;
+  private final DemeritActivity context;
   private MenuItem composeButton;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    client = new DemeritClient(this);
-    login = new LoginScreen(this, client);
-    login.init(new LoginScreen.Callback() {
-      @Override
-      public void gotCredentials() {}
-    });
-    setContentView(R.layout.compose_layout);
-    ((Button) findViewById(R.id.send_new_button)).setOnClickListener(
+  public ComposeScreen(DemeritActivity context, DemeritClient client, LoginScreen login) {
+    this.context = context;
+    this.login = login;
+    this.client = client;
+  }
+
+  public void show() {
+    context.setContentView(R.layout.compose_layout);
+    ((Button) context.findViewById(R.id.send_new_button)).setOnClickListener(
         new OnClickListener() {          
           @Override
           public void onClick(View v) {
@@ -52,12 +52,13 @@ public class ComposeActivity extends Activity {
         });
     setupToField();
   }
-
+   
   private void setupToField() {
     String[] emailAddresses = getAllEmails();
-    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+    ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
             android.R.layout.simple_dropdown_item_1line, emailAddresses);
-    AutoCompleteTextView textView = (AutoCompleteTextView)findViewById(R.id.to_field);
+    AutoCompleteTextView textView =
+        (AutoCompleteTextView) context.findViewById(R.id.to_field);
     textView.setAdapter(adapter);
     String toEmail = getLastEmailFromPreferences();
     System.err.println("Email from saved bundle: " + toEmail);
@@ -68,7 +69,7 @@ public class ComposeActivity extends Activity {
 
   private String[] getAllEmails() {
     List<String> emailAddressCollection = new ArrayList<String>();
-    ContentResolver cr = getContentResolver();
+    ContentResolver cr = context.getContentResolver();
     Cursor emailCur = 
         cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, null, null, null);
 
@@ -85,15 +86,13 @@ public class ComposeActivity extends Activity {
 
   private String getLastEmailFromPreferences() {
     SharedPreferences preferences = 
-        getBaseContext().getSharedPreferences(
-            NotesList.PREF_NAME, Activity.MODE_PRIVATE);
+        context.getBaseContext().getSharedPreferences(
+            DemeritActivity.PREF_NAME, Activity.MODE_PRIVATE);
     return preferences.getString(LAST_TO_EMAIL, null);
   }
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.compose_note, menu);
-    composeButton = menu.findItem(R.id.menu_compose);
+  public boolean onCreateOptionsMenu(Menu menu, boolean enabled) {
+    composeButton = menu.findItem(R.id.menu_send);
     composeButton.setOnMenuItemClickListener(
         new OnMenuItemClickListener() {                 
           @Override
@@ -104,7 +103,9 @@ public class ComposeActivity extends Activity {
             return true;
           }
         });
-    composeButton.setEnabled(true);
+    System.err.println("Setting enabled: "+ enabled);
+    composeButton.setVisible(enabled);
+    composeButton.setEnabled(enabled);
     return true;
   }
 
@@ -113,13 +114,21 @@ public class ComposeActivity extends Activity {
     new Thread(new Runnable() {
       @Override
       public void run() {
+        SharedPreferences.Editor preferences = 
+            context.getBaseContext().getSharedPreferences(
+                DemeritActivity.PREF_NAME, Activity.MODE_PRIVATE).edit();
+        preferences.putString(LAST_TO_EMAIL,  note.getTo());
+
+        System.err.println("Save last email: " + note.getTo());
+        preferences.commit();
+
         final boolean success = client.sendNote(note);
-        runOnUiThread(new Runnable() {
+        context.runOnUiThread(new Runnable() {
           @Override
           public void run() {
             String demeritText = note.getDemerit() ?
                 "Demerit" : "Kudo";
-            Toast.makeText(ComposeActivity.this, 
+            Toast.makeText(context, 
                 success ? (demeritText + " to " + note.getTo() + " posted!") :
                   "Error posting " + demeritText, Toast.LENGTH_SHORT).show(); 
           }
@@ -127,7 +136,7 @@ public class ComposeActivity extends Activity {
       }
     }).start();
     System.err.println("Finishing!");
-    finish();
+    context.switchToNoteList(true);
   }
 
   protected boolean verifyNote() {
@@ -144,7 +153,7 @@ public class ComposeActivity extends Activity {
   }
 
   private void reportError(String string) {
-    Toast.makeText(this, string, Toast.LENGTH_SHORT).show();
+    Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
   }
 
   private Note fillNote() {
@@ -153,26 +162,14 @@ public class ComposeActivity extends Activity {
         .setTo(getTextForField(R.id.to_field).trim())
         .setFrom(client.getEmail())
         .setText(getTextForField(R.id.demerit_text).trim())
-        .setDemerit(!((CheckBox) findViewById(R.id.kudo_checkbox)).isChecked())
+        .setDemerit(!((CheckBox) context.findViewById(R.id.kudo_checkbox)).isChecked())
         .build();
   }
 
   private String getTextForField(int id) {
-    return ((EditText) findViewById(id)).getText().toString();
+    return ((EditText) context.findViewById(id)).getText().toString();
   }
 
-  @Override
   public void onPause() {
-    super.onPause();
-    String email = getTextForField(R.id.to_field);
-    if (email != null && email.length() > 0) {
-      SharedPreferences.Editor preferences = 
-          getBaseContext().getSharedPreferences(
-              NotesList.PREF_NAME, Activity.MODE_PRIVATE).edit();
-      preferences.putString(LAST_TO_EMAIL,  email);
-
-      System.err.println("Save last email: " + email);
-      preferences.commit();
-    }
   }
 }

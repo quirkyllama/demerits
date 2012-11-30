@@ -21,6 +21,7 @@
 <!-- Keeps the processor from sleeping when a message is received. -->
 <uses-permission android:name="android.permission.WAKE_LOCK" />
    <permission android:name="com.jjs.demerits.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
 <application
         android:allowBackup="true"
@@ -36,7 +37,7 @@
   </intent-filter>
 </receiver>
        <activity
-            android:name="com.jjs.demerits.NotesList"
+            android:name="com.jjs.demerits.DemeritActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity android:theme="@style/AppTheme" 
-            android:name="com.jjs.demerits.ComposeActivity"></activity>
+            android:name="com.jjs.demerits.ComposeScreen"></activity>
     </application>
 
 </manifest>

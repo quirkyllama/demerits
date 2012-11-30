@@ -48,7 +48,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             shortEmail + " sent you a Kudo!";
       String content = note.getDemerit() ?
           String.format("From: %s\n '%s'", shortEmail, note.getText()) : note.getText();
-      Intent listIntent = new Intent(this, NotesList.class);
+      Intent listIntent = new Intent(this, DemeritActivity.class);
       listIntent.putExtra(DEMERIT_NOTE_IN_BUNDLE, encodedNote);
       PendingIntent pendingIntent = 
           PendingIntent.getActivity(this, 0, listIntent, PendingIntent.FLAG_UPDATE_CURRENT);

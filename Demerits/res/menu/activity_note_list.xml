@@ -3,4 +3,8 @@
           android:icon="@drawable/compose_button"
           android:title="Send Demerit"
           android:showAsAction="ifRoom|withText" />
+    <item android:id="@+id/menu_send"
+          android:icon="@drawable/send_note"
+          android:title="Send"
+          android:showAsAction="ifRoom|withText" />
 </menu>
