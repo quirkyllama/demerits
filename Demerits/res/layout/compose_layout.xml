@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="right"
@@ -10,56 +11,35 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:text="To:"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <AutoCompleteTextView
-            android:id="@+id/to_field"
-            android:layout_width="match_parent"
+        <Spinner
+            android:id="@+id/kudo_or_demerit"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            tools:listitem="@android:layout/simple_spinner_item" />
+        
+        <AutoCompleteTextView
+            android:id="@+id/to_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:ems="10"
-            android:selectAllOnFocus="true"
-            android:text="" />
+            android:inputType="textEmailAddress"
+            android:selectAllOnFocus="true" />
 
-    </LinearLayout>
-    
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right" >
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.99"
-            android:text="Message:"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <CheckBox
-            android:id="@+id/kudo_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Kudo?" />
     </LinearLayout>
 
     <EditText
         android:id="@+id/demerit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.02"
-        android:ems="10"
-        android:inputType="textMultiLine"
-        android:gravity="top"
-        android:background="@drawable/full_border"
         android:layout_margin="4dp"
+        android:layout_weight="0.02"
+        android:background="@drawable/full_border"
+        android:ems="10"
+        android:gravity="top"
+        android:inputType="textMultiLine"
         android:lines="2" >
+
         <requestFocus />
     </EditText>
 

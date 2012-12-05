@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.jjs.demerits.shared.DemeritUtils;
 import com.jjs.demerits.shared.DemeritsProto;
 import com.jjs.demerits.shared.DemeritsProto.NoteList;
 
@@ -40,10 +41,14 @@ public class NoteListAdapter extends ArrayAdapter<DemeritsProto.Note> {
 		
 		TextView from = (TextView) row.findViewById(R.id.note_to_from);
 		DemeritsProto.Note note = notes.get(position);
-		if (email.equals(note.getFrom())) {
-			from.setText("TO: " + note.getTo());
+		String addressText = note.getDemerit() ? "Demerits" : "Kudos";
+        boolean isTo = email.equals(note.getFrom());
+		String shortEmail = 
+		    DemeritUtils.getShortEmail(isTo ? note.getTo() : note.getFrom());
+		if (isTo) {
+			from.setText("You sent " + addressText + " to " + shortEmail);
 		} else {
-			from.setText("FROM: " + note.getFrom());			
+			from.setText(addressText + " from " + shortEmail +"!");			
 		}
 		TextView text = (TextView) row.findViewById(R.id.note_text);
 		text.setText(note.getText());
