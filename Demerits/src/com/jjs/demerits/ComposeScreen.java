@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -103,6 +105,15 @@ public class ComposeScreen {
           textView.setText(toEmail);
         }
       }
+    }
+    if (textView != null) {
+      textView.setOnItemClickListener(new OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+          EditText message = (EditText) context.findViewById(R.id.demerit_text);
+          message.requestFocus();
+        }
+      });
     }
   }
 
